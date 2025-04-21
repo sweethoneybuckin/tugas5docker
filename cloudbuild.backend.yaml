@@ -1,14 +1,14 @@
 steps:
-  # 1. Build Docker image untuk backend
+  # 1. Build Docker image dengan tag unik (berdasarkan commit ID)
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/notes-be114", "."]
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/notes-be114:$SHORT_SHA", "."]
     dir: "Backend"
 
   # 2. Push ke Container Registry / Artifact Registry
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/$PROJECT_ID/notes-be114"]
+    args: ["push", "gcr.io/$PROJECT_ID/notes-be114:$SHORT_SHA"]
 
-  # 3. Deploy ke Cloud Run
+  # 3. Deploy ke Cloud Run pakai image yang ditag unik
   - name: "gcr.io/cloud-builders/gcloud"
     entrypoint: gcloud
     args:
@@ -17,7 +17,7 @@ steps:
         "deploy",
         "notes-be114",
         "--image",
-        "gcr.io/$PROJECT_ID/notes-be174",
+        "gcr.io/$PROJECT_ID/notes-be114:$SHORT_SHA",
         "--timeout",
         "1000s",
         "--port",
@@ -27,7 +27,5 @@ steps:
         "--allow-unauthenticated",
       ]
 
-# Log hanya akan disimpan di Google Cloud Logging
-# Log tidak akan disimpan di Google Cloud Storage (butuh hak akses).
 options:
   logging: CLOUD_LOGGING_ONLY
