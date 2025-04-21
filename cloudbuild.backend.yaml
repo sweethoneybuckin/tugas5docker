@@ -1,7 +1,7 @@
 steps:
   # 1. Build Docker image dengan tag unik (berdasarkan commit ID)
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/$PROJECT_ID/notes-be114:$SHORT_SHA", "."]
+    args: ["build", "-t", "gcr.io/$PROJECT_ID/notes-be114:$SHORT_SHA", "-f", "Dockerfile", "."]
     dir: "Backend"
 
   # 2. Push ke Container Registry / Artifact Registry
